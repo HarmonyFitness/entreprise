@@ -1,0 +1,33 @@
+name: Deploy to Infomaniak
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Sync to entreprise.harmony.ch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy via FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_PATH }}
+          protocol: ftps
+          port: 21
+          local-dir: ./
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git/**
+            **/.gitignore
+            **/.github/**
+            **/README.md
+            **/.DS_Store
+            **/._*
