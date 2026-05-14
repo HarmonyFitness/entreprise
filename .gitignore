@@ -2,6 +2,9 @@
 .DS_Store
 ._*
 
+# Local screenshots / maquettes
+exports/
+
 # Editor / IDE
 .vscode/
 .idea/
