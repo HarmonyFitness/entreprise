@@ -1413,17 +1413,37 @@ h1, h2, h3, h4 {
 .form-consent-error.is-on {
   display: block;
 }
-.form-success {
+.form-success,
+.form-error {
   display: none;
   padding: 18px 16px;
   border-radius: 14px;
-  background: var(--brand-100);
-  color: var(--brand-ink);
   font-size: 14px;
   line-height: 1.5;
   margin-bottom: 16px;
 }
-.form-success.is-on { display: block; }
+.form-success {
+  background: var(--brand-100);
+  color: var(--brand-ink);
+}
+.form-error {
+  background: #fdecea;
+  color: #8b2c22;
+}
+.form-error a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.form-success.is-on,
+.form-error.is-on { display: block; }
+
+/* État loading du bouton submit */
+.form-submit.is-loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+.form-submit.is-loading svg { display: none; }
 
 @media (max-width: 900px) {
   .closing-grid { grid-template-columns: 1fr; gap: 36px; }
@@ -2096,6 +2116,10 @@ h1, h2, h3, h4 {
           Merci, votre demande est bien reçue. Julien ou Jean-Étienne reviendra vers vous sous 24 h ouvrées.
         </div>
 
+        <div class="form-error" id="formError" role="alert">
+          Une erreur est survenue lors de l'envoi. Merci de réessayer ou de nous contacter directement à <a href="mailto:corporate@harmony.ch">corporate@harmony.ch</a>.
+        </div>
+
         <form class="form-grid" id="contactForm">
           <div class="form-field">
             <label class="form-label" for="f-prenom">Prénom <span class="req">*</span></label>
@@ -2385,10 +2409,12 @@ h1, h2, h3, h4 {
     });
   })();
 
-  // Formulaire — handler local (à brancher sur endpoint Payload/serveur)
+  // Formulaire — POST vers Google Apps Script (Sheet + email vers corporate@harmony.ch)
   (function() {
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzhyWcZIJeflqJ04ZxueY2Fa7aDxECOL0nSpN05oemeu9vzM-sE17TiZCcJgqaW8zO0/exec';
     const form = document.getElementById('contactForm');
     const success = document.getElementById('formSuccess');
+    const errorBox = document.getElementById('formError');
     if (!form) return;
 
     // Messages de validation custom en français
@@ -2418,18 +2444,48 @@ h1, h2, h3, h4 {
       field.addEventListener('input', () => field.setCustomValidity(''));
     });
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      // La validation native a déjà été passée si on arrive ici
-      const data = Object.fromEntries(new FormData(form).entries());
-      // TODO : POST vers endpoint (Payload CMS / API route)
-      console.log('Lead Corporate Harmony', data);
-      if (window.dataLayer) {
-        window.dataLayer.push({ event: 'lead_corporate_form_submit' });
+      // La validation native a déjà été passée si on arrive ici.
+
+      const submitBtn = form.querySelector('.form-submit');
+      const originalContent = submitBtn.innerHTML;
+
+      // Reset previous states + état loading
+      if (errorBox) errorBox.classList.remove('is-on');
+      success.classList.remove('is-on');
+      submitBtn.classList.add('is-loading');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = 'Envoi en cours…';
+
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: new FormData(form)
+        });
+
+        // Apps Script déployé en "Anyone" → la requête passe en no-cors.
+        // On ne peut pas lire la réponse, mais l'écriture Sheet + envoi email s'exécutent côté serveur.
+        if (window.dataLayer) {
+          window.dataLayer.push({ event: 'lead_corporate_form_submit' });
+        }
+
+        success.classList.add('is-on');
+        form.reset();
+        success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      } catch (err) {
+        console.error('[Form] submission error:', err);
+        if (errorBox) {
+          errorBox.classList.add('is-on');
+          errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      } finally {
+        submitBtn.classList.remove('is-loading');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalContent;
       }
-      success.classList.add('is-on');
-      form.reset();
-      success.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
   })();
 </script>
