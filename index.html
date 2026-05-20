@@ -2081,7 +2081,7 @@ h1, h2, h3, h4 {
           Merci, votre demande est bien reçue. Julien ou Jean-Étienne reviendra vers vous sous 24 h ouvrées.
         </div>
 
-        <form class="form-grid" id="contactForm" novalidate>
+        <form class="form-grid" id="contactForm">
           <div class="form-field">
             <label class="form-label" for="f-prenom">Prénom <span class="req">*</span></label>
             <input class="form-input" type="text" id="f-prenom" name="prenom" required autocomplete="given-name" />
@@ -2372,12 +2372,35 @@ h1, h2, h3, h4 {
     const form = document.getElementById('contactForm');
     const success = document.getElementById('formSuccess');
     if (!form) return;
+
+    // Messages de validation custom en français
+    const consent = form.querySelector('#f-consent');
+    if (consent) {
+      consent.addEventListener('invalid', () => {
+        consent.setCustomValidity('Vous devez accepter d’être contacté·e pour envoyer votre demande.');
+      });
+      consent.addEventListener('change', () => consent.setCustomValidity(''));
+    }
+    form.querySelectorAll('input[required], select[required], textarea[required]').forEach(field => {
+      if (field.type === 'checkbox') return;
+      field.addEventListener('invalid', () => {
+        if (field.validity.valueMissing) {
+          field.setCustomValidity('Ce champ est requis.');
+        } else if (field.validity.typeMismatch && field.type === 'email') {
+          field.setCustomValidity('Merci de saisir une adresse email valide.');
+        } else {
+          field.setCustomValidity('');
+        }
+      });
+      field.addEventListener('input', () => field.setCustomValidity(''));
+    });
+
     form.addEventListener('submit', (e) => {
       e.preventDefault();
+      // La validation native a déjà été passée si on arrive ici
       const data = Object.fromEntries(new FormData(form).entries());
       // TODO : POST vers endpoint (Payload CMS / API route)
       console.log('Lead Corporate Harmony', data);
-      // Tracking
       if (window.dataLayer) {
         window.dataLayer.push({ event: 'lead_corporate_form_submit' });
       }
