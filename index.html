@@ -1369,6 +1369,18 @@ h1, h2, h3, h4 {
 }
 .form-legal a { color: var(--brand-700); text-decoration: underline; text-underline-offset: 2px; }
 
+/* Honeypot — invisible mais présent dans le DOM (anti-spam) */
+.form-honeypot {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* Checkbox consentement */
 .form-consent {
   grid-column: span 2;
@@ -2051,6 +2063,13 @@ body.has-modal-open { overflow: hidden; }
         </div>
 
         <form class="form-grid" id="contactForm">
+          <!-- Honeypot anti-spam : champ invisible que les bots remplissent automatiquement -->
+          <div class="form-honeypot" aria-hidden="true">
+            <label>Ne pas remplir
+              <input type="text" name="website" tabindex="-1" autocomplete="off" />
+            </label>
+          </div>
+
           <div class="form-field">
             <label class="form-label" for="f-prenom">Prénom <span class="req">*</span></label>
             <input class="form-input" type="text" id="f-prenom" name="prenom" required autocomplete="given-name" />
