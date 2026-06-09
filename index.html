@@ -2062,11 +2062,14 @@ body.has-modal-open { overflow: hidden; }
           Une erreur est survenue lors de l'envoi. Merci de réessayer ou de nous contacter directement à <a href="mailto:corporate@harmony.ch">corporate@harmony.ch</a>.
         </div>
 
-        <form class="form-grid" id="contactForm">
-          <!-- Honeypot anti-spam : champ invisible que les bots remplissent automatiquement -->
+        <form class="form-grid" id="contactForm" action="https://formspree.io/f/mdavzwrd" method="POST">
+          <!-- Sujet custom de la notification Formspree -->
+          <input type="hidden" name="_subject" value="[Harmony Entreprise] Nouvelle demande de contact" />
+
+          <!-- Honeypot anti-spam : champ invisible (convention Formspree _gotcha) -->
           <div class="form-honeypot" aria-hidden="true">
             <label>Ne pas remplir
-              <input type="text" name="website" tabindex="-1" autocomplete="off" />
+              <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" />
             </label>
           </div>
 
@@ -2542,9 +2545,9 @@ body.has-modal-open { overflow: hidden; }
     });
   })();
 
-  // Formulaire — POST vers Google Apps Script (Sheet + email vers corporate@harmony.ch)
+  // Formulaire — POST vers Formspree (notification email + spam filter Akismet inclus)
   (function() {
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzhyWcZIJeflqJ04ZxueY2Fa7aDxECOL0nSpN05oemeu9vzM-sE17TiZCcJgqaW8zO0/exec';
+    const FORMSPREE_URL = 'https://formspree.io/f/mdavzwrd';
     const form = document.getElementById('contactForm');
     const success = document.getElementById('formSuccess');
     const errorBox = document.getElementById('formError');
@@ -2592,14 +2595,16 @@ body.has-modal-open { overflow: hidden; }
       submitBtn.innerHTML = 'Envoi en cours…';
 
       try {
-        await fetch(APPS_SCRIPT_URL, {
+        const response = await fetch(FORMSPREE_URL, {
           method: 'POST',
-          mode: 'no-cors',
+          headers: { 'Accept': 'application/json' },
           body: new FormData(form)
         });
 
-        // Apps Script déployé en "Anyone" → la requête passe en no-cors.
-        // On ne peut pas lire la réponse, mais l'écriture Sheet + envoi email s'exécutent côté serveur.
+        if (!response.ok) {
+          throw new Error('Formspree responded with status ' + response.status);
+        }
+
         if (window.dataLayer) {
           window.dataLayer.push({ event: 'lead_corporate_form_submit' });
         }
