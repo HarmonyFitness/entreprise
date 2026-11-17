@@ -329,11 +329,10 @@ h1, h2, h3, h4 {
 }
 .hero-stat-label {
   font-family: var(--font-sans);
-  font-size: 10.5px;
-  font-weight: 500;
-  color: rgba(255,255,255,.5);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(255,255,255,.72);
+  letter-spacing: 0;
   white-space: nowrap;
 }
 .hero-stat-value {
@@ -357,7 +356,7 @@ h1, h2, h3, h4 {
 }
 @media (max-width: 600px) {
   .hero-stats { gap: 14px; padding-top: 18px; margin-top: 24px; }
-  .hero-stat-label { font-size: 9px; letter-spacing: 0.08em; }
+  .hero-stat-label { font-size: 11px; }
   .hero-stat-value { font-size: 22px; }
 }
 
@@ -458,13 +457,12 @@ h1, h2, h3, h4 {
 }
 .why-stat-label {
   display: inline-flex; align-items: center; gap: 10px;
-  font-family: var(--font-sans);
-  font-size: 11px;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--brand-700); /* WCAG AA : 6.4:1 sur blanc */
-  font-weight: 700;
-  margin-bottom: 8px;
+  font-family: var(--font-display);
+  font-size: clamp(16px, 1.4vw, 19px);
+  letter-spacing: -0.005em;
+  color: var(--brand-700);
+  font-weight: 500;
+  margin-bottom: 10px;
 }
 .why-stat-label::before {
   content: ""; width: 18px; height: 1.5px;
@@ -565,13 +563,13 @@ h1, h2, h3, h4 {
   padding-top: 6px;
 }
 .cap-tag {
-  font-family: var(--font-mono);
-  font-size: 10.5px; font-weight: 500;
-  padding: 4px 9px;
+  font-family: var(--font-sans);
+  font-size: 12px; font-weight: 500;
+  padding: 5px 10px;
   border-radius: 6px;
   background: rgba(58,143,194,.1);
   color: var(--brand-ink);
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
 }
 
 /* Featured = grande tuile verticale (Accès au réseau, col-3 × 2 rows) */
@@ -667,11 +665,10 @@ h1, h2, h3, h4 {
 .cap-category:nth-of-type(n+3) { margin-top: 16px; }
 .cap-category-label {
   font-family: var(--font-display);
-  font-size: clamp(15px, 1.5vw, 18px);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  line-height: 1;
-  text-transform: uppercase;
+  font-size: clamp(18px, 1.6vw, 22px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
   color: var(--ink-3);
 }
 
@@ -1702,7 +1699,7 @@ body.has-modal-open { overflow: hidden; }
       <span class="logo-suffix">Entreprise</span>
     </a>
     <a class="btn-primary" href="#contact">
-      Demander un appel
+      Demander un appel sous 24 h
       <svg viewBox="0 0 16 16" width="14" height="14" fill="none"><path d="M3 8 H13 M9 4 L13 8 L9 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </a>
   </div>
@@ -1714,7 +1711,6 @@ body.has-modal-open { overflow: hidden; }
   <!-- TODO Harmony : remplacer par photo lifestyle équipe en cours collectif en entreprise -->
   <div class="hero-bg" role="img" aria-label="Cours collectif dans un club Harmony en Suisse romande"></div>
   <div class="hero-inner">
-    <span class="eyebrow">Harmony Entreprise</span>
     <h1>Placez le bien-être<br/>au cœur de votre entreprise.</h1>
     <p class="hero-sub">Abonnements multi-clubs, cours sur site et conférences santé. Modulable selon vos enjeux.</p>
 
@@ -2065,7 +2061,6 @@ body.has-modal-open { overflow: hidden; }
 
       <!-- Colonne gauche : humain & canaux -->
       <div class="closing-left">
-        <span class="eyebrow">Contact</span>
         <h2>Parlons de votre projet.</h2>
         <p class="closing-lead">Julien et Jean-Étienne, vos interlocuteurs Entreprise, reviennent vers vous sous 24 h ouvrées avec une première proposition.</p>
 
