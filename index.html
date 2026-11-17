@@ -2361,10 +2361,10 @@ body.has-modal-open { overflow: hidden; }
       });
       const map = mapInstance;
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · © <a href="https://carto.com/">CARTO</a>',
-        subdomains: 'abcd',
-        maxZoom: 19
+      // Fond de carte Esri World Gray Canvas — minimal, gris clair, sans clé API
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '© <a href="https://www.esri.com/">Esri</a> · © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 16
       }).addTo(map);
 
       // Crée les marqueurs et garde une référence pour pouvoir les filtrer
